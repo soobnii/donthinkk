@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fournine.app.user.mapper.UserMapper">
+
+	<select id="getAllUserInfo" parameterType="Integer" resultType="map">
+		select user_no, social_id, social_type, user_nickname, introduction, profile_image_path, is_public
+		from t_user
+		where is_deleted = 'F';
+	</select>
+	<select id="getUserSearch" parameterType="Integer" resultType="com.fournine.app.user.dto.UserDto">
+		select user_no, social_id, social_type, user_nickname, introduction, profile_image_path, is_public
+		from t_user
+		where user_no=#{userNo}
+		  and is_deleted = 'F';
+	</select>
+	<select id="getUserBySocialId" parameterType="String" resultType="com.fournine.app.user.dto.UserDto">
+		select social_id, social_type, user_nickname, user_no
+		from t_user
+		where social_id=#{socialId}
+			AND social_type=#{socialType}
+			AND is_deleted = "F";
+	</select>
+	<select id="getUserInfo" parameterType="String" resultType="com.fournine.app.user.dto.UserDto">
+		select user_no, social_id, social_type, user_nickname, introduction, is_public
+		from t_user
+		where social_id=#{socialId}
+		  AND social_type=#{socialType}
+		  AND is_deleted = "F";
+	</select>
+	<insert id="insertUserForSignup" parameterType="com.fournine.app.user.dto.UserDto">
+		insert into t_user(social_id, social_type, user_nickname)
+		values(#{socialId}, #{socialType}, #{userNickname})
+	</insert>
+	<insert id="insertUserInfo" parameterType="com.fournine.app.user.dto.UserDto">
+		insert into t_user(social_id, social_type, user_nickname, introduction, is_public)
+		values(#{socialId}, #{socialType}, #{userNickname}, #{introduction}, #{isPublic})
+	</insert>
+	<update id="updateUserInfoByUserNo" parameterType="com.fournine.app.user.dto.UserDto">
+		update t_user
+		set user_nickname=#{userNickname}, introduction=#{introduction}, is_public=#{isPublic}, update_timestamp=now()
+		where user_no=#{userNo}
+		and is_deleted="F"
+	</update>
+	<update id="deleteUserInfo" parameterType="Integer">
+		update t_user
+		set is_deleted="T", delete_timestamp=now()
+		where user_no=#{userNo}
+		and is_deleted="F"
+	</update>
+	<select id="getUserProfilePath" parameterType="_int" resultType="com.fournine.app.user.dto.UserProfile">
+		select user_no, profile_image_path
+		from t_user
+		where user_no=#{userNo}
+		  AND is_deleted = "F";
+	</select>
+	<update id="updateUserProfilePath" parameterType="com.fournine.app.user.dto.UserProfile">
+		update t_user
+		set profile_image_path=#{profileImagePath}, update_timestamp=now()
+		where user_no=#{userNo}
+		and is_deleted = "F"
+	</update>
+</mapper>

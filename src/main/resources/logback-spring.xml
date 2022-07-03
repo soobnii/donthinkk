@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://velog.io/@happyssol/spring-boot-초기-설정logback -->
+<!-- https://ppoble.tistory.com/m/6 -->
+
+<configuration scan="true" scanPeriod="60 seconds">
+
+	<!-- log file path -->
+	<property name="LOG_PATH" value="/home/log"/>
+	<!-- log file name -->
+	<property name="LOG_FILE_NAME" value="app_log"/>
+	<!-- pattern -->	
+	<property name="LOG_PATTERN" value="%-5level %d{yy-MM-dd HH:mm:ss}[%thread] [%logger{0}:%line] - %msg%n"/>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>${LOG_PATTERN}</Pattern>
+		</layout>
+	</appender>
+	
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+		<file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
+		<append>true</append>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
+			<fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyyMMdd}_%i.log</fileNamePattern>
+			<!-- 파일당 최고 용량 kb, mb, gb --> 
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<!-- 일자별 로그파일 최대 보관주기(~일), 해당 설정일 이상된 파일은 자동으로 제거-->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+	
+
+	<!--
+		%d : 로그 기록시간
+		%-5level : 로그 레벨, -5는 출력의 고정폭 값(5글자) 로그 레벨을 출력해줍니다.
+			앞에 -5는 5칸을 할당하겠다는 의미입니다.(error debug는 다섯글자이므로 info도 5칸을 차지하라는 설정)
+		%thread : 현재 Thread 명
+		%Logger{length} : Logger name을 축약할 수 있다. {length}는 최대 자리 수
+		%logger{0}:%line : 로그를 출력시킨 java파일명과, line입니다 (크기를 증가시키면 com.example.demo.~~~의 풀네임이 출력)
+		%msg : - 로그 메시지 (=%message)
+		%n : 줄바꿈(new line)
+	 -->
+
+	<root level="INFO">
+		<springProfile name="local">
+			<appender-ref ref="CONSOLE"/>
+		</springProfile>
+		<springProfile name="prod">
+			<appender-ref ref="FILE"/>
+		</springProfile>
+	</root>
+	
+	<!-- log4jdbc 옵션 설정 --> 
+    <logger name="jdbc" level="OFF"/>
+    
+</configuration>

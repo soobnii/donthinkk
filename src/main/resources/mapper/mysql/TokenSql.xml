@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fournine.app.token.mapper.TokenMapper">
+
+	<select id="getRefreshToken" parameterType="String" resultType="String">
+		select refresh_token
+		from t_token
+		where social_id=#{socialId}
+		AND social_type=#{socialType}
+	</select>
+	<select id="getTokenByUserInfo" parameterType="String" resultType="String">
+		select refresh_token
+		from t_token
+		where social_id=#{socialId}
+		  AND social_type=#{socialType}
+	</select>
+	<insert id="insertTokenInfo" parameterType="String">
+		insert into t_token(social_id, social_type, refresh_token)
+		values(#{socialId}, #{socialType}, #{refreshToken})
+	</insert>
+	<update id="updateRefreshToken" parameterType="String">
+		update t_token
+		set refresh_token=#{refreshToken}, update_timestamp=now()
+		where social_id=#{socialId}
+		  AND social_type=#{socialType}
+	</update>
+	<delete id="deleteRefreshToken" parameterType="String">
+		delete from t_token
+		where social_id=#{socialId}
+		  AND social_type=#{socialType}
+	</delete>
+</mapper>

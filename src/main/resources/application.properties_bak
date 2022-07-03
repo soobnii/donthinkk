@@ -1,0 +1,120 @@
+# local, dev, prod
+#spring.profiles.active=local
+#logging.level.root=debug
+
+server.port=8080
+
+# devtools사용시에 적용 가능한 설정, auto restart 여부
+spring.devtools.restart.enabled=false
+
+# ===============================
+# JWT
+# ===============================
+jwt.secret=fnjavainuse
+# 5 * 60 * 60
+#jwt.expiration=18000
+
+# ===============================
+# LOGBACK /
+# ===============================
+#logging.config=classpath:logback-${spring.profiles.active}.xml
+#spring.profiles.include=local_console_logging
+spring.profiles.include=master_file_logging
+
+# ===============================
+# DATABASE
+# ===============================
+
+spring.datasource.driverClassName=org.mariadb.jdbc.Driver
+#real DB
+spring.datasource.url=jdbc:mariadb://${DB_HOST:133.186.211.210}:${DB_PORT:3306}/${DB_NAME:fournine_app}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
+
+#local DB
+#spring.datasource.url=jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:fournine_app}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
+
+spring.datasource.username=${MYSQL_USER:fournine}
+spring.datasource.password=${MYSQL_USER_PASSWORD:fournine49}
+spring.datasource.platform=h2
+spring.h2.console.enabled=true
+spring.datasource.sql-script-encoding=UTF-8
+#
+## Keep the connection alive if idle for a long time (needed in production)
+#spring.datasource.testWhileIdle = true
+#spring.datasource.validationQuery = SELECT 1
+
+
+# ===============================
+# JPA / HIBERNATE
+# ===============================
+
+# drop & create table, good for testing, comment -> ì´ì false
+spring.jpa.generate-ddl=false
+
+# Hibernate ddl auto (create, create-drop, update, none)
+spring.jpa.hibernate.ddl-auto=none
+
+# Naming strategy
+spring.jpa.hibernate.naming-strategy = org.hibernate.cfg.ImprovedNamingStrategy
+
+# Show or not log for each sql query -> ì´ì false
+spring.jpa.show-sql=${SHOW_SQL:true}
+#logging.level.org.hibernate.type.descriptor.sql=trace
+
+# SQL script - always (default), naver
+spring.datasource.initialization-mode=always
+
+# Query print pretty --> ì´ì false
+spring.jpa.properties.hibernate.format_sql=true
+## The SQL dialect makes Hibernate generate better SQL for the chosen database
+#spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
+## Allows Hibernate to generate SQL optimized for a particular DBMS
+#spring.jpa.properties.hibernate.dialect=org.hibernate.spatial.dialect.mysql.MySQL5InnoDBSpatialDialect
+#spring.jpa.database-platform = org.hibernate.spatial.dialect.mysql.MySQLSpatial56Dialect
+
+# actuator
+management.endpoints.web.exposure.include=*
+#management.endpoints.web.exposure.exclude=env,beans
+
+# ===============================
+# CORS ( 교차 출처 리소스 공유 정책 )
+# ===============================
+# íì© ê°ë¥í ì¤ë¦¬ì§ ì ë³´
+#cors.allow.origin=*
+#cors.allow.origin=http://localhost:3000,http://localhost:3001
+cors.allow.origin=*
+#http://localhost:3000,http://192.168.50.171:32000,http://192.168.50.172:32000,http://192.168.2.75:3000
+
+# ===============================
+# FILE UPLOAD SIZE(파일 업로드 크기) /
+# ===============================
+spring.servlet.multipart.maxRequestSize=-1
+spring.servlet.multipart.maxFileSize=-1
+spring.http.multipart.enabled=false
+
+#multipart
+spring.jackson.serialization.FAIL_ON_EMPTY_BEANS=false
+
+#maximum number of milliseconds that a client will wait for a connection
+spring.datasource.hikari.connection-timeout = 30000
+#minimum number of idle connections maintained by HikariCP in a connection pool
+spring.datasource.hikari.minimum-idle= 10
+#maximum pool size
+spring.datasource.hikari.maximum-pool-size= 30
+#maximum idle time for connection
+spring.datasource.hikari.idle-timeout=10000
+# maximum lifetime in milliseconds of a connection in the pool after it is closed.
+spring.datasource.hikari.max-lifetime= 1000
+#default auto-commit behavior.
+spring.datasource.hikari.auto-commit =true
+
+mybatis.configuration.map-underscore-to-camel-case=true
+mybatis.mapper-locations= mapper/mysql/*.xml
+
+spring.output.ansi.enabled=always
+
+#upload 설정
+#spring.servlet.multipart.enabled=true
+#spring.servlet.multipart.file-size-threshold=2KB
+#spring.servlet.multipart.max-file-size=200MB
+#spring.servlet.multipart.max-request-size=215MB
+#upload-path=/images/picture

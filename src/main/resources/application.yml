@@ -1,0 +1,117 @@
+# local, dev, prod
+#spring.profiles.active: local
+#logging.level.root: debug
+
+server:
+  port: 8080
+
+# devtools사용시에 적용 가능한 설정, auto restart 여부
+spring:
+  profiles:
+    active: local
+    
+  devtools:
+    restart:
+      enabled: false
+
+  datasource: 
+    driverClassName: org.mariadb.jdbc.Driver
+    url: "jdbc:mariadb://${DB_HOST:133.186.211.210}:${DB_PORT:3306}/${DB_NAME:fournine_app}?useSSL: false&allowPublicKeyRetrieval: true&characterEncoding: UTF-8&serverTimezone: UTC"
+    username: ${MYSQL_USER:fournine}
+    password: ${MYSQL_USER_PASSWORD:fournine49}
+    platform: h2
+    sql-script-encoding: UTF-8 #한글깨짐 방지
+    initialization-mode: always #내장된 sql script 사용
+
+    # https://blog.miyam.net/100
+    hikari:
+      #maximum number of milliseconds that a client will wait for a connection
+      # 30초
+      connection-timeout :  30000
+      #minimum number of idle connections maintained by HikariCP in a connection pool
+      #Default : maximum-pool-size와 동일
+      #minimum-idle:  10
+      #maximum pool size
+      maximum-pool-size:  30
+      #maximum idle time for connection
+      idle-timeout: 10000
+      # maximum lifetime in milliseconds of a connection in the pool after it is closed.
+      max-lifetime:  1000
+      #Default : true
+      auto-commit : true
+
+    output: # 콘솔에서 뜨는 로그에 색이 입혀짐
+        ansi:
+          enabled: always
+          
+  h2: #h2 콘솔 사용하기
+    console:
+      enabled: true
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming-strategy :  org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        show-sql: ${SHOW_SQL:true}
+        format_sql: true # sql문 로그를 예쁘게 포맷팅해줌
+
+  # FILE UPLOAD SIZE(파일 업로드 크기). -1은 제한 없음
+  servlet:
+    multipart:
+      maxRequestSize: -1 # 파일 한 개의 용량이 아니라 요청당 최대 파일 크기
+      maxFileSize: -1 # 파일당 최대 파일 크기
+      enabled: true # 서블릿 컨테이너가 멀티파트와 관련된 처리를 하지 않음
+      # https://velog.io/@dbsrud11/Spring-MVC-2-11.-%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C
+
+  # No serializer found for class 
+  # JPA 관련. @OneToMany - Lazy 로딩시 비어있는 bean을 serialization 하면서 에러 발생
+  # 아래 설정 말고 엔티티에 개별 어노테이션 추가해서 해결할 수 있다고 하나 일단 이렇게 처리
+  # @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+jwt:
+  secret: fnjavainuse
+
+# 엔드포인트 전체 노출
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+# CORS ( 교차 출처 리소스 공유 정책 )
+cors:
+  allow:
+    origin: "*"
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations:  mapper/mysql/*.xml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  #profiles:
+   # include: local_console_logging
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  
+#  profiles:
+ #   include: master_file_logging
+---
+property:
+  images:
+    profile-path: /home/centos/workspace/images/profile
